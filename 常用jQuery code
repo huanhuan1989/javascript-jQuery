@@ -130,40 +130,42 @@ fn.showTab = function(){
 
 //文本框 focus  blur 方法
 fn._placeHolder = function(cfg){
-		var option = {
-			id:'',
-			text:'',
-			focuscolor:'#000',
-			blurcolor:'#999',
-			focusrun:function(){},
-			blurrun:function(){}
-		};
-		for (var i in cfg) {
-			if (option.hasOwnProperty(i)) {
-				option[i] = cfg[i];
-			}
+	var option = {
+		id:'',
+		text:'',
+		focuscolor:'#000',
+		blurcolor:'#999',
+		focusrun:function(){},
+		blurrun:function(){}
+	};
+	for (var i in cfg) {
+		if (option.hasOwnProperty(i)) {
+			option[i] = cfg[i];
 		}
-		$(option.id).live({
-			focus:function(){
-				$(this).attr('tempvalue',$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)==null?'':$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)[1]);
-				if($(this).attr('tempvalue')==option.text){
-					$(this).val('');
-					$(this).css('color',option.focuscolor);
-				}else{
-					$(this).css('color',option.focuscolor);
-				}
-				option.focusrun();
-			},
-			blur:function(){
-				$(this).attr('tempvalue',$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)==null?'':$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)[1]);
-				if($(this).attr('tempvalue').length<1){
-					$(this).val(option.text);	
-					$(this).css('color',option.blurcolor);
-				}
-				option.blurrun();
-			}
-		});
 	}
+	$(option.id).live({
+		focus:function(){
+			$(this).attr('tempvalue',$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)==
+			null?'':$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)[1]);
+			if($(this).attr('tempvalue')==option.text){
+				$(this).val('');
+				$(this).css('color',option.focuscolor);
+			}else{
+				$(this).css('color',option.focuscolor);
+			}
+			option.focusrun();
+		},
+		blur:function(){
+			$(this).attr('tempvalue',$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)==
+			null?'':$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)[1]);
+			if($(this).attr('tempvalue').length<1){
+				$(this).val(option.text);	
+				$(this).css('color',option.blurcolor);
+			}
+			option.blurrun();
+		}
+	});
+}
 
 fn.placeHolder = function(){
 	fn._placeHolder({id:$('[data-rule="searchQuery"]'),text:'想去哪？'});
@@ -245,7 +247,12 @@ fn._keyFocus = function(kval){
     });
 }
 fn.keyFocus = function(){
-    fn._keyFocus({id:$('[data-rule="passwordTxt"]'),hideTd:$('[data-rule="passwordShow"]'),hideInput:$('#showPwd'),inputTxt:'输入密码'});
+    fn._keyFocus({
+    	id:$('[data-rule="passwordTxt"]'),
+    	hideTd:$('[data-rule="passwordShow"]'),
+    	hideInput:$('#showPwd'),
+    	inputTxt:'输入密码'
+    });
 }
 
 
@@ -258,10 +265,10 @@ fn.pricePrice = function(){
 			event.stopPropagation();
 			T.addClass('thFPriceHover');
 			$(document).bind('click',function(event){
-	  		if(!$(event.target).hasClass('thFPbox')){
-	  			T.removeClass('thFPriceHover');	
-	  		}
-  		});
+	  			if(!$(event.target).hasClass('thFPbox')){
+	  				T.removeClass('thFPriceHover');	
+	  			}
+  			});
 		}
 	});
 }
@@ -269,45 +276,50 @@ fn.pricePrice = function(){
 
 //点击显示隐藏  简单树结构
 fn._filter = function(cfg){
-		var option = {
-			id:'',
-			parentClass:'',
-			clickClass:'',
-			showClass:'',
-			clickrun:function(){}
-		};
-		for (var i in cfg) {
-			if (option.hasOwnProperty(i)) {
-				option[i] = cfg[i];
-			}
+	var option = {
+		id:'',
+		parentClass:'',
+		clickClass:'',
+		showClass:'',
+		clickrun:function(){}
+	};
+	for (var i in cfg) {
+		if (option.hasOwnProperty(i)) {
+			option[i] = cfg[i];
 		}
-		$(option.id).find('.'+option.clickClass).live({
-			click:function(event){
-				if ($(this).parents('.'+option.parentClass).find('.'+option.showClass).is(':visible')){
-					event.stopPropagation();
-					if($(this).hasClass('thDevelop')){
-						$(this).addClass('thPackUp');
-					}
-					$(this).parents('.'+option.parentClass).find('.'+option.showClass).hide();
-				}else{
-					if($(this).hasClass('thDevelop')){
-						$(this).removeClass('thPackUp');
-					}
-					$(this).parents('.'+option.parentClass).find('.'+option.showClass).show();
-				}
-				option.clickrun();
-			}
-		});
 	}
+	$(option.id).find('.'+option.clickClass).live({
+		click:function(event){
+			if ($(this).parents('.'+option.parentClass).find('.'+option.showClass).is(':visible')){
+				event.stopPropagation();
+				if($(this).hasClass('thDevelop')){
+					$(this).addClass('thPackUp');
+				}
+				$(this).parents('.'+option.parentClass).find('.'+option.showClass).hide();
+			}else{
+				if($(this).hasClass('thDevelop')){
+					$(this).removeClass('thPackUp');
+				}
+				$(this).parents('.'+option.parentClass).find('.'+option.showClass).show();
+			}
+			option.clickrun();
+		}
+	});
+}
 
 fn.filter = function(){
-	fn._filter({id:$('[data-rule="dateFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thDataFilter'});
-	fn._filter({id:$('[data-rule="serviceFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
-	fn._filter({id:$('[data-rule="themeFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
-	fn._filter({id:$('[data-rule="daysTripFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
-	fn._filter({id:$('[data-rule="destinationsFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
-	//左侧的树结构调用
-	fn._filter({id:$('[data-rule="treeFilter"]'),parentClass:'thDestMBot',clickClass:'thTreeToo',showClass:'thDestMsecondary'});
+	fn._filter({
+		id:$('[data-rule="dateFilter"]'),
+		parentClass:'thFilterBox',
+		clickClass:'thDevelop',
+		showClass:'thDataFilter'
+	});
+	fn._filter({
+		id:$('[data-rule="serviceFilter"]'),
+		parentClass:'thFilterBox',
+		clickClass:'thDevelop',
+		showClass:'thFilterList'
+	});
 }
 
 //日历 调用方法
@@ -337,17 +349,17 @@ fn.setDatePickerLanguage = function(){
 
 fn.datePickerBind = function(){
 	$('[data-rule="dataStart"]').datepicker({
-      defaultDate: "+1w",
-      onClose: function( selectedDate ) {
-        $('[data-rule="dataEnd"]').datepicker( "option", "minDate", selectedDate );
-      }
-    });
-    $('[data-rule="dataEnd"]').datepicker({
-      defaultDate: "+1w",
-      onClose: function( selectedDate ) {
-        $('[data-rule="dataStart"]').datepicker( "option", "maxDate", selectedDate );
-      }
-    });
+		defaultDate: "+1w",
+		onClose: function( selectedDate ) {
+			$('[data-rule="dataEnd"]').datepicker( "option", "minDate", selectedDate );
+		}
+	});
+	$('[data-rule="dataEnd"]').datepicker({
+		defaultDate: "+1w",
+			onClose: function( selectedDate ) {
+			$('[data-rule="dataStart"]').datepicker( "option", "maxDate", selectedDate );
+		}
+	});
 }
 
 $(function(){
