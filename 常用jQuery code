@@ -182,7 +182,7 @@ fn._txtFocus = function(kval){
         blur:function(){}
     }
     for(var i in kval){
-        if(option hasOwnProperty(i)){
+        if (option.hasOwnProperty(i)){
             option[i] = kval[i];
         }
     }
@@ -220,7 +220,7 @@ fn._keyFocus = function(kval){
         blur:function(){}
     }
     for(var i in kval){
-        if(option hasOwnProperty(i)){
+        if (option.hasOwnProperty(i)){
             option[i] = kval[i];
         }
     }
