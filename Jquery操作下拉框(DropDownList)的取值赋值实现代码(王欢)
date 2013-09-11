@@ -1,0 +1,99 @@
+Jquery操作下拉框(DropDownList)的取值赋值实现代码（王欢）
+1. 获取选中项：
+
+获取选中项的Value值：
+$('select#sel option:selected').val();
+或者
+$('select#sel').find('option:selected').val();
+获取选中项的Text值：
+$('select#seloption:selected').text();
+或者
+$('select#sel').find('option:selected').text();
+ 
+
+2. 获取当前选中项的索引值：
+
+$('select#sel').get(0).selectedIndex;
+ 
+
+3. 获取当前option的最大索引值：
+
+$('select#sel option:last').attr("index")
+ 
+
+4. 获取DropdownList的长度：
+
+$('select#sel')[0].options.length;
+或者
+$('select#sel').get(0).options.length;
+ 
+
+5. 设置第一个option为选中值：
+
+$('select#sel option:first').attr('selected','true')
+或者
+$('select#sel')[0].selectedIndex = 0;
+ 
+
+6. 设置最后一个option为选中值：
+
+$('select#sel option:last).attr('selected','true')
+ 
+
+7. 根据索引值设置任意一个option为选中值：
+
+$('select#sel')[0].selectedIndex =索引值;索引值=0,1,2....
+ 
+
+8. 设置Value=4 的option为选中值：
+
+$('select#sel').attr('value','4');
+或者
+$("select#sel option[value='4']").attr('selected', 'true');
+ 
+
+9. 删除Value=3的option：
+
+$("select#sel option[value='3']").remove();
+ 
+
+10.删除第几个option：
+
+$(" select#sel option ").eq(索引值).remove();索引值=0,1,2....
+如删除第3个Radio:
+$(" select#sel option ").eq(2).remove();
+ 
+
+11.删除第一个option：
+
+$(" select#sel option ").eq(0).remove();
+或者
+$("select#sel option:first").remove();
+ 
+
+12. 删除最后一个option：
+
+$("select#sel option:last").remove();
+ 
+
+13. 删除dropdownlist:
+
+$("select#sel").remove();
+ 
+
+14.在select后面添加一个option:
+
+$("select#sel").append("f");
+ 
+
+15. 在select前面添加一个option:
+
+$("select#sel").prepend("0");
+ 
+
+16. 遍历option：
+
+$(' select#sel option ').each(function (index, domEle) {
+//写入代码
+});
+ 
