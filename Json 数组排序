@@ -1,0 +1,21 @@
+/*********************************************Json 数组排序 *********************************************/
+function PlayDesc(json,desc,type){
+
+    if(json){
+        if(desc == "desc" && type == "takeMath"){
+            return json.sort(function(a,b){return a.takeMath<b.takeMath?1:-1});
+        };
+
+        if(desc == "asc" && json != "takeMath"){
+            return json.sort(function(a,b){return a.takeMath>b.takeMath?1:-1});
+        };
+
+        if(desc == "desc" && type == "hostLevel"){
+            return json.sort(function(a,b){return a.hostLevel<b.hostLevel?1:-1});
+        };
+
+        if(desc == "asc" && json != "hostLevel"){
+            return json.sort(function(a,b){return a.hostLevel>b.hostLevel?1:-1});
+        };
+    }
+};
