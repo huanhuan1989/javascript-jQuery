@@ -1,0 +1,53 @@
+1.获取选中值，三种方法都可以：
+
+$('input:radio:checked').val();
+$("input[type='radio']:checked").val();
+$("input[name='rd']:checked").val();
+ 
+
+2、设置第一个Radio为选中值：
+
+$('input:radio:first').attr('checked', 'checked');
+或者
+$('input:radio:first').attr('checked', 'true');
+注： attr("checked",'checked')= attr("checked", 'true')= attr("checked", true)
+ 
+
+3.设置最后一个Radio为选中值：
+
+$('input:radio:last').attr('checked', 'checked');
+或者
+$('input:radio:last').attr('checked', 'true');
+ 
+
+4.根据索引值设置任意一个radio为选中值：
+
+$('input:radio').eq(索引值).attr('checked', 'true');索引值=0,1,2....
+或者
+$('input:radio').slice(1,2).attr('checked', 'true');
+ 
+
+5.根据Value值设置Radio为选中值
+
+$("input:radio[value='rd2']").attr('checked','true');
+或者
+$("input[value='rd2']").attr('checked','true');
+ 
+
+6.删除Value值为rd2的Radio
+
+$("input:radio[value='rd2']").remove();
+ 
+
+7.删除第几个Radio
+
+$("input:radio").eq(索引值).remove();索引值=0,1,2....
+如删除第3个Radio:$("input:radio").eq(2).remove();
+ 
+
+8.遍历Radio
+
+$('input:radio').each(function(index,domEle){
+//写入代码
+});
+ 
