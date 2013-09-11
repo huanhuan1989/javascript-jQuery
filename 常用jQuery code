@@ -1,0 +1,369 @@
+/**
+ * hhBase 平台js
+ * User: huanhuan
+ * QQ: 651471385
+ * Email: th.wanghuan@gmail.com
+ * Date: 13-9-1
+ * Time: 上午10:05
+ * Dependence jquery-1.7.2.min.js
+ */
+var fn = {};
+
+//鼠标划过显示隐藏方法
+fn._hoverShow = function(infor){
+    var option = {
+        id:'',
+        addClass:'',
+        showBox:'',
+        showTriangle:'',
+        mouseenter:function(){},
+        mouseleave:function(){}
+    }
+    for(var i in infor){
+        if(option.hasOwnProperty(i)){
+            option[i] = infor[i];
+        }
+    }
+    $(option.id).on({
+        'mouseenter' : function(e){
+            $(this).addClass(option.addClass);
+            $(this).find('.'+option.showBox).show();
+            $(this).find('.'+option.showTriangle).show();
+            option.mouseenter();
+        },
+        'mouseleave' : function(e){
+            $(this).removeClass(option.addClass);
+            $(this).find('.'+option.showBox).hide();
+            $(this).find('.'+option.showTriangle).hide();
+            option.mouseleave();
+        }
+    });
+}
+fn.hoverShow = function(){
+    fn._hoverShow({
+        id:$('[data-rule="hoverShow"]'),
+        addClass:'topmenu-dropdown-hover'
+    });
+    fn._hoverShow({
+        id:$('[data-rule="hoverShow-weixin"]'),
+        showBox:'topmenu-item-weix',
+        showTriangle:'weix-triangle'
+    });
+}
+
+//判断文本框的值是否为空，有值的情况就隐藏提示语，没有值就显示
+fn._keyup = function(keys){
+    var option = {
+        id:'',
+        keyup:function(){},
+        blur:function(){}
+    }
+    for(var i in keys){
+        if(option.hasOwnProperty(i)){
+            option[i] = keys[i];
+        }
+    }
+
+    $(option.id).each(function(){
+        var thisVal=$(option.id).val();
+        //判断文本框的值是否为空，有值的情况就隐藏提示语，没有值就显示
+
+      if(thisVal!=""){
+       $(this).siblings("span").hide();
+      }else{
+       $(this).siblings("span").show();
+      }
+        $(this).live({
+            keyup:function(){
+                var val=$(this).val();
+            $(this).siblings("span").hide();
+            },
+            blur:function(){
+                var val=$(this).val();
+                if(val!=""){
+                    $(this).siblings("span").hide();
+                }else{
+                    $(this).siblings("span").show();
+                }
+            }
+        });
+        $(this).siblings("span").click(function(){
+            $(option.id).focus();
+        });
+    });
+}
+fn.keyup = function(){
+    fn._keyup({id:$('[data-rule="keyTxt"]')});
+    fn._keyup({id:$('[data-rule="keyPassword"]')});
+}
+
+//TAB 标签切换
+fn._showTab = function(op){
+	var option ={
+		id : '',
+		addClass : '',
+		showClass : '',
+		clickrun:function(){}
+	}
+	for(var i in op){
+		if(option.hasOwnProperty(i)){
+			option[i] = op[i];
+		}
+	}
+	$(option.id).find('li').live({
+		click:function(){
+			var index = $(this).index();
+			$(this).addClass('current').siblings().removeClass('current');
+			$('.'+option.showClass).eq(index).show().siblings('.'+option.showClass).hide();
+			option.clickrun();
+		}
+	});
+	
+}
+fn.showTab = function(){
+	fn._showTab({
+	  id:$('[data-rule="dateTab"]'),
+	  addClass:'current',
+	  showClass:'thSupList'
+	});
+}
+
+//文本框 focus  blur 方法
+fn._placeHolder = function(cfg){
+		var option = {
+			id:'',
+			text:'',
+			focuscolor:'#000',
+			blurcolor:'#999',
+			focusrun:function(){},
+			blurrun:function(){}
+		};
+		for (var i in cfg) {
+			if (option.hasOwnProperty(i)) {
+				option[i] = cfg[i];
+			}
+		}
+		$(option.id).live({
+			focus:function(){
+				$(this).attr('tempvalue',$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)==null?'':$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)[1]);
+				if($(this).attr('tempvalue')==option.text){
+					$(this).val('');
+					$(this).css('color',option.focuscolor);
+				}else{
+					$(this).css('color',option.focuscolor);
+				}
+				option.focusrun();
+			},
+			blur:function(){
+				$(this).attr('tempvalue',$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)==null?'':$(this).val().match(/^\s*(\S+(\s+\S+)*)\s*$/)[1]);
+				if($(this).attr('tempvalue').length<1){
+					$(this).val(option.text);	
+					$(this).css('color',option.blurcolor);
+				}
+				option.blurrun();
+			}
+		});
+	}
+
+fn.placeHolder = function(){
+	fn._placeHolder({id:$('[data-rule="searchQuery"]'),text:'想去哪？'});
+	fn._placeHolder({id:$('[data-rule="searchMap"]'),text:'想去哪里？'});	
+}
+
+//文本框 focus  blur 方法
+fn._txtFocus = function(kval){
+    var option = {
+        id:'',
+        hideInput:'',
+        inputTxt:'',
+        focus:function(){},
+        blur:function(){}
+    }
+    for(var i in kval){
+        if(option hasOwnProperty(i)){
+            option[i] = kval[i];
+        }
+    }
+    $(option.id).on({
+        'focus':function(){
+            var mail = $(this).val();
+            if(mail == option.inputTxt){
+                $(this).val('');
+                $(this).css('color','#333');
+            }
+            option.focus();
+        },
+        'blur':function(){
+            var mail = $(this).val();
+            if(mail == ''){
+                $(this).val(option.inputTxt);
+                $(this).css('color','#999');
+            }
+            option.blur();
+        }
+    });
+}
+fn.txtFocus = function(){
+    fn._textFocus({id:$('[data-rule="nameTxt"]'),inputTxt:'输入用户名'});
+}
+
+//密码框文字的显示、隐藏
+fn._keyFocus = function(kval){
+    var option = {
+        id:'',
+        hideTd:'',
+        hideInput:'',
+        inputTxt:'',
+        focus:function(){},
+        blur:function(){}
+    }
+    for(var i in kval){
+        if(option hasOwnProperty(i)){
+            option[i] = kval[i];
+        }
+    }
+    $(option.id).on({
+        'focus':function(){
+            var text_value = $(this).val();
+            if (text_value == this.defaultValue) {
+                $('#'+option.hideInput).hide();
+                $('#thpassword').show().focus();
+            }
+            option.focus();
+        }
+    });
+
+    $(option.hideTd).on({
+        'blur':function(){
+            var text_value = $(this).val();
+            if (text_value == '') {
+                $('#'+option.hideInput).show();
+                $(this).hide();
+            }
+            option.blur();
+        }
+    });
+}
+fn.keyFocus = function(){
+    fn._keyFocus({id:$('[data-rule="passwordTxt"]'),hideTd:$('[data-rule="passwordShow"]'),hideInput:$('#showPwd'),inputTxt:'输入密码'});
+}
+
+
+//点击显示 其它地方隐藏
+fn.pricePrice = function(){
+	var pricePrice;
+	$('[data-rule="pricePrice"]').live({
+		click:function(event){
+			var T = $(this);
+			event.stopPropagation();
+			T.addClass('thFPriceHover');
+			$(document).bind('click',function(event){
+	  		if(!$(event.target).hasClass('thFPbox')){
+	  			T.removeClass('thFPriceHover');	
+	  		}
+  		});
+		}
+	});
+}
+
+
+//点击显示隐藏  简单树结构
+fn._filter = function(cfg){
+		var option = {
+			id:'',
+			parentClass:'',
+			clickClass:'',
+			showClass:'',
+			clickrun:function(){}
+		};
+		for (var i in cfg) {
+			if (option.hasOwnProperty(i)) {
+				option[i] = cfg[i];
+			}
+		}
+		$(option.id).find('.'+option.clickClass).live({
+			click:function(event){
+				if ($(this).parents('.'+option.parentClass).find('.'+option.showClass).is(':visible')){
+					event.stopPropagation();
+					if($(this).hasClass('thDevelop')){
+						$(this).addClass('thPackUp');
+					}
+					$(this).parents('.'+option.parentClass).find('.'+option.showClass).hide();
+				}else{
+					if($(this).hasClass('thDevelop')){
+						$(this).removeClass('thPackUp');
+					}
+					$(this).parents('.'+option.parentClass).find('.'+option.showClass).show();
+				}
+				option.clickrun();
+			}
+		});
+	}
+
+fn.filter = function(){
+	fn._filter({id:$('[data-rule="dateFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thDataFilter'});
+	fn._filter({id:$('[data-rule="serviceFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
+	fn._filter({id:$('[data-rule="themeFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
+	fn._filter({id:$('[data-rule="daysTripFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
+	fn._filter({id:$('[data-rule="destinationsFilter"]'),parentClass:'thFilterBox',clickClass:'thDevelop',showClass:'thFilterList'});
+	//左侧的树结构调用
+	fn._filter({id:$('[data-rule="treeFilter"]'),parentClass:'thDestMBot',clickClass:'thTreeToo',showClass:'thDestMsecondary'});
+}
+
+//日历 调用方法
+fn.setDatePickerLanguage = function(){
+	jQuery(function($){
+		$.datepicker.regional['zh'] = {
+			closeText: '关闭',
+			prevText: '&#x3C;上月',
+			nextText: '下月&#x3E;',
+			currentText: '今天',
+			monthNames: ['一月','二月','三月','四月','五月','六月',
+			'七月','八月','九月','十月','十一月','十二月'],
+			monthNamesShort: ['一月','二月','三月','四月','五月','六月',
+			'七月','八月','九月','十月','十一月','十二月'],
+			dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+			dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+			dayNamesMin: ['日','一','二','三','四','五','六'],
+			weekHeader: '周',
+			dateFormat: 'yy-mm-dd',
+			firstDay: 1,
+			isRTL: false,
+			showMonthAfterYear: true,
+			yearSuffix: '年'};
+		$.datepicker.setDefaults($.datepicker.regional['zh']);
+	});		
+}
+
+fn.datePickerBind = function(){
+	$('[data-rule="dataStart"]').datepicker({
+      defaultDate: "+1w",
+      onClose: function( selectedDate ) {
+        $('[data-rule="dataEnd"]').datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $('[data-rule="dataEnd"]').datepicker({
+      defaultDate: "+1w",
+      onClose: function( selectedDate ) {
+        $('[data-rule="dataStart"]').datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+}
+
+$(function(){
+	//平台首页设置样式
+    $('.platFSList dl:even').css('padding-right','40px');
+    $('.plFIOMain dl:even').css({'padding-right':'18px','border-right':'1px solid #e0e0e0'});
+    $('.plFIOMain dl:odd').css({'padding-left':'18px'});
+    $('.platFRagent dl:even').css('padding-right','32px');
+    $('.platFRaList li').eq(2).nextAll().find('label').addClass('platFRaLnumber00');
+    //设置最后一个header-nav的css样式
+    $('.topHeader-nav li:last').css('padding-right','0');
+  
+    //fn调用方法
+    for(fname in fn){
+        if(fname.indexOf('_') == -1){
+            fn[fname]();
+        }
+    }
+});
