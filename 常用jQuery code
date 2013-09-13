@@ -19,11 +19,17 @@ fn._hoverShow = function(infor){
         mouseenter:function(){},
         mouseleave:function(){}
     }
+    
+    //这个地方如果不用for循环来弄的，那么可以用extend来合并使用！
+    /*
     for(var i in infor){
         if(option.hasOwnProperty(i)){
             option[i] = infor[i];
         }
     }
+    */
+    option = $.extend(option, infor);
+    
     $(option.id).on({
         'mouseenter' : function(e){
             $(this).addClass(option.addClass);
