@@ -58,6 +58,41 @@ fn.hoverShow = function(){
     });
 }
 
+//checkbox 全选
+fn._checkBox = function(num){
+    var option = {
+        id:'',
+        itemClass:'',
+        listClass:'',
+        clickCheckRun:function(){}
+    }
+    option = $.extend(option,num);
+
+    $(option.id).bind({
+        click:function(){
+            $('.'+option.itemClass+',.'+option.listClass).attr('checked',($(this).attr('checked') == "checked"));
+            option.clickCheckRun();
+        }
+    });
+
+    $('.'+option.listClass).bind({
+        click:function(){
+            $(this).parents('.toolbar_box').find('.'+option.itemClass)
+            .attr('checked',($(this).attr('checked') == "checked"));
+            option.clickCheckRun();
+        }
+    });
+
+}
+fn.checkBox = function(){
+    fn._checkBox({
+        id:$('[data-rule="checkAll"]'),
+        itemClass:'chkItem',
+        listClass:'checkListAll'
+    });
+}
+
+
 //判断文本框的值是否为空，有值的情况就隐藏提示语，没有值就显示
 fn._keyup = function(keys){
     var option = {
