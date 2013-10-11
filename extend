@@ -1,0 +1,43 @@
+function silder(infor){
+    //第1种调用方法 
+    var defaults = {
+       imgBox : function(){return new Getimg();}
+    }
+    var option = $.extend(defaults, infor);
+    function Getimg(){
+        this.imgList = $('.box');
+    }
+    option.imgBox().imgList;
+    
+    
+    //第2种调用方法 
+    var op = $.extend({
+        picBox:new GetImg()
+    },infor);
+    function GetImg(){
+        this.cir = $('.box');
+    }
+    op.picBox.cir;
+    
+    
+    //调用方法 
+    function GetSize(){
+        this.w = $('.'+option.picBox,_thisAll).width();
+        this.h = $('.'+option.picBox,_thisAll).height();
+        return this;
+    }
+    var s = GetSize;
+    s.w
+    
+    //调用方法 
+    function getSiz(){
+        var w = $('.'+option.picBox,_thisAll).width();
+        var h = $('.'+option.picBox,_thisAll).height();
+        return { w: w, h: h}
+    }
+    var size = getSiz();
+    size.w
+        
+        
+        
+}
