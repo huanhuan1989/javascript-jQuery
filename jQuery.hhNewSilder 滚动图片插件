@@ -1,0 +1,127 @@
+ /**
+ * jQuery.hhNewSilder 滚动图片插件
+ * User: huanhuan
+ * QQ: 651471385
+ * Email: th.wanghuan@gmail.com
+ * 微博: huanhuan的天使
+ * Date: 13-7-4
+ * Time: 下午5:20
+ * Dependence jquery-1.7.2.min.js
+ */
+
+
+$(function(){
+
+	$.fn.hhNewSilder = function(infor){
+        var defaults = {
+            autoTimer:6000,
+			speed:1000,
+            picBox:'thDSpic',
+            circleBox:'thDSnumber',
+            leftEle:'thDSprev',
+            rightEle:'thDSnext',
+            preLoadSrc:'images/loading.gif',
+            autoPlay:true,
+            imgBox:function(){return GetBox();},
+            imgBoxSize:function(){return GetSize();}
+        };
+
+        var option = $.extend(defaults, infor || {}),
+            circleLi = option.imgBox().circleLi,
+            imgList = option.imgBox().imgList,
+            imgSize = option.imgBoxSize(),
+            _thisAll = $(this),
+            n = 1;
+
+        $('.'+option.circleBox).find('li:eq(0)').addClass('thScrusor');
+        //拿到li
+        function GetBox(){
+            this.circleLi = $('.'+option.circleBox,_thisAll).find("li");
+            this.imgList =$('.'+option.picBox,_thisAll).find("li");
+            return this;
+        }
+
+        //设置宽度、高度
+        function GetSize(){
+            this.w = $('.'+option.picBox,_thisAll).width();
+            this.h = $('.'+option.picBox,_thisAll).height();
+            return this;
+        }
+        var s = GetSize;
+        s.w
+
+        //设置ul的宽度
+        $('.'+option.picBox, _thisAll).find('ul').css({
+            width : imgList.width() * imgList.length
+        });
+
+        /*function getSiz(){
+            var w = $('.'+option.picBox,_thisAll).width();
+            var h = $('.'+option.picBox,_thisAll).height();
+            return { w: w, h: h}
+        }
+        var size = getSiz();
+        size.w*/
+
+        return this.each(function(){
+            //初始化时给li添加class="show"
+            imgList.eq(0).addClass('show').css({'left':0}).siblings().removeClass('show').css({'left':imgSize.w}); 
+
+            function Play(){
+                if(imgList.is(':animated')) return; //如果在运动则返回
+                var _index = $('.'+option.picBox).find('li.show').index();  //得到当前的
+                _index = _index == "-1" ? 0 : _index;
+                if(imgList.eq(n).hasClass('show')) return;  //如果有show class则返回
+                circleLi.eq(n).addClass('thScrusor').siblings().removeClass('thScrusor'); //圆点
+                imgList.slice(_index,_index+1).animate({'left':-imgSize.w},option.speed,function(){
+                    $(this).css({'left':imgSize.w});
+                }).removeClass('show');
+                imgList.eq(n).animate({left:0},option.speed).addClass('show'); //当前li添加show属性
+                //追加
+                if(imgList.length-1>n){
+                    n++;
+                }else{
+                    n=0;
+                }
+            }
+            _init = function(){
+                var x=null;
+                $('.'+option.picBox).find('li:gt(0)').css('left',imgSize.w);
+                if(option.autoPlay) x=setInterval(Play,option.autoTimer);
+                circleLi.click(function(){
+                    n = $(this).index();
+                    Play();
+                    if(option.autoPlay){
+                        clearInterval(x);
+                        x=setInterval(Play,option.autoTimer);
+                    }
+                });
+
+                //左右按钮绑定事件
+                $('.'+option.leftEle+',.'+option.rightEle).css({'opacity':'0.3'}).live({
+                    mouseover:function(){
+                        $(this).stop(true,false).animate({'opacity':'1'},400);
+                    },
+                    mouseout:function(){
+                        $(this).stop(true,false).animate({'opacity':'0.3'},400);
+                    },
+                    click:function(){
+                        var _index = $('.'+option.picBox).find('li.show').index();
+                        if($(this).attr('class')==option.leftEle){
+                            n = _index==0?(imgList.length-1):_index-1;
+                        }else{
+                            n = _index==(imgList.length-1)?0:_index+1;
+                        }
+                        Play();
+                        if(option.autoPlay){
+                            clearInterval(x);
+                            x=setInterval(Play,option.autoTimer);
+                        }
+                    }
+                });
+
+            }
+            return _init();
+        });
+	}
+});
