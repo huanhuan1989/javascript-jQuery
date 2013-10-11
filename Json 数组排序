@@ -1,3 +1,15 @@
+ /**
+ * jQuery.hhNewSilder 滚动图片插件
+ * User: huanhuan
+ * QQ: 651471385
+ * Email: th.wanghuan@gmail.com
+ * 微博: huanhuan的天使
+ * Date: 13-7-4
+ * Time: 下午5:20
+ * Dependence jquery-1.7.2.min.js
+ */
+ 
+ 
 /*********************************************Json 数组排序 *********************************************/
 function PlayDesc(json,desc,type){
 
