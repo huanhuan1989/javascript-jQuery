@@ -1,0 +1,139 @@
+ /**
+ * jQuery.hhLRSlider   左右滚动图片插件
+ * User: huanhuan
+ * QQ: 651471385
+ * Email: th.wanghuan@gmail.com
+ * 微博: huanhuan的天使
+ * Date: 13-10-14
+ * Time: 上午11:10
+ * Dependence jquery-1.7.2.min.js
+ */
+
+$(function($){
+    $.fn.hhLRSlider = function(infor){
+        // default configuration properties
+        var defaulns = {
+            prevId: 		'prevBtn',
+            prevText: 		'Previous',
+            nextId: 		'nextBtn',
+            nextText: 		'Next',
+            speed: 			400,
+            auto:			false,
+            pause:			6000,
+            vertical:      false,            //滑动方向，目前不实用
+            continuous:	false,
+            numeric: 		false,           //数字滚动   目前不实用
+            numericId: 	'controls'      //数字id滚动 目前不实用
+        };
+        var options = $.extend(defaulns, infor);
+        this.each(function() {
+            var obj = $(this);
+            var ul = $('ul',obj);
+            var li = $('li', obj);
+            var l = $('li', obj).length;
+            var ow = $('li', obj).outerWidth();
+            var t = 1;
+            var autoFun;
+            var prevId = $('#'+options.prevId);
+            var nextId = $('#'+options.nextId);
+            //设置ul的宽度
+            $('ul', obj).css('width',l*ow);
+
+            //上一页
+            function prevPlay(){
+                ul.stop().animate({left:-(t*ow*-1)},options.speed, 'swing',
+                    function(){
+                        ul.children(':first').before(ul.children(':last'));
+                        ul.stop().css({'left':0}).animate({left: 0},options.speed, 'swing');
+                    }
+                );
+            }
+
+            //下一页
+            function nextPlay(){
+                ul.stop().animate({left:(t*ow*-1)},options.speed, 'swing',
+                    function(){
+                        ul.append(ul.children(':first'));
+                        ul.css({left: 0});
+                    }
+                );
+            }
+
+            function init(){
+                autoSlide();
+                 //huanhuan**停止滚动
+                 clearFun(obj);
+                 clearFun(prevId);
+                 clearFun(nextId);
+                 //huanhuan**事件划入时停止自动滚动
+                 function clearFun(elem){
+                     elem.hover(function(){
+                        clearTimeout(autoFun);
+                     },function(){
+                        autoSlide();
+                     });
+                 }
+                 //huanhuan**自动滚动
+                 function autoSlide(){
+                 $('#'+options.nextId).trigger('click');
+                    //此处不可使用setInterval,setInterval是重复执行传入函数,这会引起第二次划入时停止失效
+                    autoFun = setTimeout(autoSlide, options.pause);
+                 }
+                //左右按钮mouseover   mouseout   click 事件
+                $('.'+options.prevId+',.'+options.nextId).css({'opacity':'0.3'}).live({
+                    mouseover:function(){
+                        $(this).stop(true).animate({'opacity':'1'},400);
+                    },
+                    mouseout:function(){
+                        $(this).stop(true).animate({'opacity':'0.3'},400);
+                    },
+                    click:function(){
+                        if($(this).attr('id') == options.nextId){
+                            nextPlay();
+                        }else{
+                            prevPlay();
+                        }
+                    }
+                });
+            }
+            return init();
+
+        });
+    }
+ });
+
+
+
+
+<<---- HTML ---->>
+<!--partners-->
+    <div class="thLeft thHezuo">
+        <span class="thLeft prevBtn" id="prevBtn"></span>
+        <div class="thLeft thHezuo_ul thRelative" id="hhLRSlider">
+            <ul>
+                <li name="01" class="show"><a href="#"><img src="images/img/pic12.jpg" width="162"></a></li>
+                <li name="02"><a href="#"><img src="images/img/pic13.jpg" width="162" ></a></li>
+                <li name="03"><a href="#"><img src="images/img/pic14.jpg" width="162" ></a></li>
+                <li name="04"><a href="#"><img src="images/img/pic15.jpg" width="162" ></a></li>
+                <li name="05"><a href="#"><img src="images/img/pic16.jpg" width="162" ></a></li>
+                <li name="06"><a href="#"><img src="images/img/pic12.jpg" width="162"></a></li>
+                <li name="07"><a href="#"><img src="images/img/pic13.jpg" width="162" ></a></li>
+                <li name="08"><a href="#"><img src="images/img/pic14.jpg" width="162" ></a></li>
+            </ul>
+        </div>
+        <span class="thRight nextBtn" id="nextBtn"></span>
+    </div>
+<!--partners-->
+
+
+
+
+<<---- CSS ---->>
+
+.thHezuo{border-top:1px solid #e7e7e7;padding:55px 0;width:100%;margin-top:20px;overflow:hidden;}
+.thHezuo li{float:left;padding:0 12px;height:54px;}
+.thHezuo .prevBtn,.thHezuo .nextBtn{width:25px;height:54px;
+background:url("../images/sliderbtn.png") no-repeat left 0;cursor:pointer;}
+.thHezuo .nextBtn{background:url("../images/sliderbtn.png") no-repeat right 0;}
+.thHezuo .thHezuo_ul{width:930px;overflow:hidden;height:980px;height:54px;}
+.thHezuo .thHezuo_ul ul{position:absolute;}
