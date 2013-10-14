@@ -105,6 +105,21 @@ $(function($){
 
 
 
+
+
+<<---- CSS ---->>
+.thHezuo{border-top:1px solid #e7e7e7;padding:55px 0;width:100%;margin-top:20px;overflow:hidden;}
+.thHezuo li{float:left;padding:0 12px;height:54px;}
+.thHezuo .prevBtn,.thHezuo .nextBtn{width:25px;height:54px;
+background:url("../images/sliderbtn.png") no-repeat left 0;cursor:pointer;}
+.thHezuo .nextBtn{background:url("../images/sliderbtn.png") no-repeat right 0;}
+.thHezuo .thHezuo_ul{width:930px;overflow:hidden;height:980px;height:54px;}
+.thHezuo .thHezuo_ul ul{position:absolute;}
+
+
+
+
+
 <<---- HTML ---->>
 <!--partners-->
     <div class="thLeft thHezuo">
@@ -126,20 +141,14 @@ $(function($){
 <!--partners-->
 
 
-
-
-<<---- CSS ---->>
-
-.thHezuo{border-top:1px solid #e7e7e7;padding:55px 0;width:100%;margin-top:20px;overflow:hidden;}
-.thHezuo li{float:left;padding:0 12px;height:54px;}
-.thHezuo .prevBtn,.thHezuo .nextBtn{width:25px;height:54px;
-background:url("../images/sliderbtn.png") no-repeat left 0;cursor:pointer;}
-.thHezuo .nextBtn{background:url("../images/sliderbtn.png") no-repeat right 0;}
-.thHezuo .thHezuo_ul{width:930px;overflow:hidden;height:980px;height:54px;}
-.thHezuo .thHezuo_ul ul{position:absolute;}
-
-
-
-
-
+<<---- HTML JAVASCRIPT call ---->>
+<script>
+$(function(){
+    //合作伙伴左右滚动插件
+    $('#hhLRSlider').hhLRSlider({
+        auto: true,
+        continuous: true
+    });
+});
+</script>
 
