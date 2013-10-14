@@ -13,17 +13,17 @@ $(function($){
     $.fn.hhLRSlider = function(infor){
         // default configuration properties
         var defaulns = {
-            prevId: 		'prevBtn',
-            prevText: 		'Previous',
-            nextId: 		'nextBtn',
-            nextText: 		'Next',
-            speed: 			400,
-            auto:			false,
-            pause:			6000,
-            vertical:      false,            //滑动方向，目前不实用
-            continuous:	false,
-            numeric: 		false,           //数字滚动   目前不实用
-            numericId: 	'controls'      //数字id滚动 目前不实用
+            prevId:     'prevBtn',
+            prevText:   'Previous',
+            nextId:     'nextBtn',
+            nextText:   'Next',
+            speed:      400,
+            auto:       false,
+            pause:      6000,
+            vertical:   false,            //滑动方向，目前不实用
+            continuous: false,
+            numeric:    false,           //数字滚动   目前不实用
+            numericId:  'controls'      //数字id滚动 目前不实用
         };
         var options = $.extend(defaulns, infor);
         this.each(function() {
@@ -137,3 +137,9 @@ background:url("../images/sliderbtn.png") no-repeat left 0;cursor:pointer;}
 .thHezuo .nextBtn{background:url("../images/sliderbtn.png") no-repeat right 0;}
 .thHezuo .thHezuo_ul{width:930px;overflow:hidden;height:980px;height:54px;}
 .thHezuo .thHezuo_ul ul{position:absolute;}
+
+
+
+
+
+
