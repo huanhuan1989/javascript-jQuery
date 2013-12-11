@@ -1,0 +1,11 @@
+最近老是看见许多人再问jqueryMobile里面页面跳转闪屏怎么解决？之前我也遇到过类似的问题,不对,应该是只要你使用了jqm,都会遇到这个问题。还好,之前一直跟着树根老师学习,所以这个问题也就解决了。现在分享给大家。
+body { 
+    padding: 0; 
+    margin: 0; 
+    border: 0; 
+    font-size: 14px; 
+    -webkit-user-select: none;
+    -webkit-text-size-adjust: none; 
+    font-family: helvetica;
+    -webkit-backface-visibility: hidden;/* for 闪屏 */ 
+} 
