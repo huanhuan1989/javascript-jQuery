@@ -1,0 +1,184 @@
+/**
+ * User: huanhuan
+ * QQ: 651471385
+ * Email: th.wanghuan@gmail.com
+ * 微博: huanhuan的天使
+ * Data 2013-12-13
+ * web:https://github.com/huanhuan1989
+ http://www.cnblogs.com/huanhuan1989/
+ */
+
+/*
+*引用类型
+* Object();
+* 第一种方法使用new操作符后跟Object构造函数
+* 第二种方法是使用对象字面量表示法
+* 注意：在通过对象字面量定义对象时，实际上不会调用Object构造函数（Firefox 2及更早的版本会调用Object构造函数；
+* 但Firefox 3之后就不会了！）
+* */
+// 第一种方法使用new操作符后跟Object构造函数
+var parents = new Object();
+parents.name = 'huanhuan';
+parents.age = 24;
+console.log('parents name：'+parents.name+'\n'+'parents age：'+parents.age);
+
+
+//第二种方法是使用对象字面量表示法
+var person = {};   //与 new Object()相同
+var person ={
+   // 'first name':'wang',
+    name:'wanghuan',
+    age:24
+};
+console.log(person.name);
+/*
+ function displayInfo(infor){
+ var person = '';
+ if(typeof infor.name == 'string'){
+ person += 'name:'+infor.name+'\n';
+ }
+
+ if(typeof infor.age == 'number'){
+ person += 'age:'+infor.age+'\n';
+ }
+ console.log(person);
+ }
+
+ displayInfo({
+ name:'aa',
+ age:25
+ });
+
+ displayInfo(
+ age:24
+ });
+ */
+var  a = new Object();
+a.age = 29;
+console.log(a['age']);  //同等于 console.log(a.name);使用方括号的时候，里边的属性一定要以字符串的形式来写！
+//使用方括号的优势是可以通过变量来访问属性！如下：
+var propertyName = 'name';
+console.log(person[propertyName]);      //可以用变量来访问
+//如果属性名中有空格的话，是不可以用点来访问的，只可以用方括号来访问
+//如下：
+person['first name'] = 'Nicholas';
+console.log(person['first name']);  //因为first name中有一个空格，所以是不可以用点来访问的，只可以用方括号来访问
+
+
+
+
+/*
+* Array 类型
+*创建数组有两种方法
+*第一种基本方式是使用Array构造函数
+*第二种基本方式是使用数组字面量表示法
+*注意：与对象一样，使用数组字面量表示法时，也不会调用Array构造函数(Firefox 3及更早版本除外)
+* */
+//第一种是使用Array构造函数，如下：
+var colors = new Array();
+
+var colors = new Array(10); //创建length值为10的数组
+
+var colors = new Array('red','blue','green'); //创建一个包含3个字符串值的数组
+
+var colors = new Array(3);  //创建一个包含3项的数组
+var names = new Array('Greg');  //创建一个包含1个项，即字符串'Greg'数组
+console.log(names);
+
+//第二种基本方式是使用数组字面量表示法
+var colors = ['red','blue','green'];  //创建一个包含3个字符串的数组
+var name = [];     //创建一个空数组
+var values = [1,2,];  //不要这样，这样会创建一个包含2或3项的数组
+var options = [,,,,,];   //不要这样，这样会创建一个包含5或6的数组
+
+//使用数组字面量表示法的时候，数组的索引是从0开始的，如下
+var colors = ['red','blue','green'];
+console.log(colors[0]);
+//修改第二项的内容，代码如下：
+colors[1] = 'blank';
+console.log(colors[1]);
+//使用length 获取数组的项数，代码如下:
+console.log(colors.length);
+var colors_name = []; //创建一个空数组
+console.log(colors_name.length);
+//如果其中一项是空的话，代码如下：
+var colors_aa = [1,2,3];
+colors_aa[3] ='' ;  //colors_aa.length = 4;
+console.log(colors_aa[5]);
+
+/*
+* 检测数组，判断是不是一个数组！
+* 对于一个网页，或者是一个全局作用域而言，使用instanceof操作符就能得到满足
+* */
+ /*instanceof操作符的问题在于，如果框架中有单一的全局执行环境。
+if(value instanceof Array){
+    //对数组执行某些操作
+}
+*/
+//代码如下：
+function inst(){
+    var infors = [1,2];
+    var infors_00 ='ssss';
+    if(infors instanceof Array){
+         console.log(infors);
+    }
+}
+inst();
+
+/*
+* 实际上存在两个以上不同的全局执行环境，从而存在两个以上不同的版本的Array构造函数。如果你从一个框架向另一个框架传入
+* 一个数组，那么传入的数组与第二个框架中原生创建的数组分别具有不同的构造函数。
+* 为了解决这个问题，增加了Array.isArray()方法！这个方法的目的是最终确定某个值到底是不是数组。而不管它是在哪个
+* 全局执行环境中创建。
+* 代码如下：
+*/
+/*if(Array.isArray(value)){
+    //对数组执行某些操作
+} */
+//代码如下：
+function aas(){
+    var ss = ['a','b'];
+    if(Array.isArray(ss)){
+        console.log(ss);
+    }
+}
+aas();
+//支持Array.isArray()方法的浏览器有IE9+、Firefox 4+、Safari 5+、Opera 10.5+ 和 Chrome。
+
+/*
+* 转换方法
+* 所以对象都具有toString()、valueOf()方法。调用数组的toString()方法会返回数组中每个值的字符串形式拼接而成的
+* 一个以逗号分隔的字符串。
+* 而调用valueOf()方法返回的还是数组。
+* 使用join()方法，可以使用不同的分隔符来构建由数组转换的字符串。它接受一个字符串参数，将其用作分隔符。默认
+* 为逗号。如果传入‘’，则将数组无素拼接起来，与字符串的+操作运算一样。
+* */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
