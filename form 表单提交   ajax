@@ -1,0 +1,66 @@
+//如果提交按钮是A标签的时候，
+<form id="fm" action="www.baidu.com">
+<input type="text" name="aaa">
+<a href="javascript:void(0)" onclick="sumbit()">
+<a href="javascript:void(0)" onclick="window.location.href=www.baidu.com?aaa=$('[name=aaa]').val()">
+<a href="javascript:void(0)" onclick="$.ajax({url:'www.baidu.com',data:{aaa:$('[name=aaa]').val()},success:function(){}})">
+</form>
+
+
+
+
+//如果提交表单后返回一个成功页面，时先把FORM提交到一个IFRAME上面
+<form method="post" action="http://cmsapp.koolearn.com/formguide.php?formid=65&siteid=2" target="myform" name="myform" id="myform">
+     <input type="text" name="info[username_cet]" id="username_cet"  value="请输入真实姓名"  />
+     <input type="text" name="info[email_cet]" id="email_cet" value="输入邮箱地址接收预约通知"  />
+     <input type="text" name="info[mobile_cet]" id="mobile_cet" value="输入手机号码接收预约通知"  />
+     <input type="submit" name="dosubmit" id="dosubmit" class="layer_mask_dl_btn" value="提 交" />
+    </form>
+
+<iframe  name="myform" id="myform" style="width:0;height:0;"></iframe>
+
+
+
+
+
+ajax:
+1、
+$('#dosubmit').click(function(){
+        var demo1 = $('#demo1').val();
+        var demo2 = $('#demo2').val();
+        var demo3 = $('#demo3').val();
+        var url = '';
+        var param = {demo1:demo1,demo2:demo2,demo3:demo3};
+        $.ajax({url:url,data:param,dataType:'json',type:'get',
+            success:function(r){
+
+            },
+            error:function(){
+
+            }
+        });
+
+    });
+
+
+2、
+$('#dosubmit').click(function(){
+        var param = {};
+        $('.AAinput_text').each(function(){
+            var name = $(this).attr('name');
+            var val = $(this).val();
+            param[name]=val;
+        });
+
+        var url = '';
+        $.ajax({url:url,data:param,dataType:'json',type:'get',
+            success:function(r){
+
+            },
+            error:function(){
+
+            }
+        });
+
+    });
+
