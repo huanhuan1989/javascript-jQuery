@@ -1,0 +1,6 @@
+var MM = function(config){
+    config = $.extend({
+        mm: true,
+        name: 'xieliang'
+    }, config||{});//如果没有 ||{}的时候  直接用  MM() 为报错, 如果有这个则没事
+}
