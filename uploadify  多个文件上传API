@@ -1,0 +1,559 @@
+
+uploadify 在线中文手册 ：http://www.yauld.cn/uploadifydoc/
+uploadify 官方网： http://www.uploadify.com/
+说明：http://www.pooy.net/uploadify-php.html
+
+项目中的例子：
+
+
+HTML页面：
+<input id="file_upload" name="file_upload" type="file" multiple="true">   <!-- file -->
+<input type="button" name="dosubmit" id="submit" onclick="$('#file_upload')
+.uploadify('settings', 'formData');$('#file_upload').uploadify('upload','*')" class="AApic AAui_btn28" value="提交" />
+
+
+JS：
+<link rel="stylesheet" type="text/css" href="/css/uploadify.css"/>
+<script src="/js/jquery.uploadify.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function() {
+     var name = '';
+     $('#file_upload').uploadify({
+          'auto' : false,//关闭自动上传
+         'removeTimeout' : 0,//文件队列上传完成1秒后删除
+          'width':'418px', //浏览按钮的宽度
+          'height':'26px', //浏览按钮的高度
+          'fileDataName': 'Filedata',//服务器端脚本使用的文件对象的名称 $_FILES个['Filedata']
+          'swf': '/js/uploadify.swf',  //flash
+          'uploader':'/teachadmin/resource', //上传处理程序
+         'buttonImage':'/img/AAfile_u_ly.jpg',//浏览按钮的背景图片路径
+         'formData': {'someKey' : 'someValue', 'someOtherKey' : 1},
+         //每个上传完成并成功的文件都会触发本事件
+         'onUploadSuccess':function(file, data, response){
+              name +=','+data;
+         },
+         //队列完成后触发ajax方法请求
+         'onQueueComplete':function(queueData){
+              var resource_id = $('[name="resource_id"]').val(),
+                   unit_id = $('[name="unit_id"]').val();
+             jQuery.ajax({
+                  type: "POST",
+                  data: {'unit_id':unit_id,'resource_id':resource_id, 'data' : name},
+                  dataType:'html',
+                  url: "/teachadmin/addassign",
+                  success: function(response){
+                      alert(response);
+                  }
+               });
+             }
+     }); 
+     $(".AAm_s_ul .tl-00").live("click", function () {
+        var resource_id = $('[name="resource_id"]').val();
+        $.ajax({
+            type:'POST',
+            url:"/teachadmin/getunitid",
+            data:{id:resource_id},
+            success:function(data){
+                $("#unit").html(data);
+            }
+        })
+    });
+});
+</script>
+
+
+后台：
+<?php 
+
+/**
+ * TeachadminController
+ * 
+ * @author qianjin    2014.4.16
+ * @version 授课管理（管理员）
+ */
+class TeachadminController extends Tbl_Base_Controller {
+     
+     /**
+      * 初始化
+      * @see Ccc_Base_Controller::init()
+      */
+     public function init() {
+          parent::init();
+          $this->_Teachadmin = new TeachadminModel();
+     }
+     
+     /**
+      * 
+      *  课堂列表
+      */
+     public function resourceAction(){
+          
+          //获取资源列表
+          $ResourcesList = $this->_Teachadmin->getResourcesList();
+          //获取默认资源的单元
+          $UnitList = $this->_Teachadmin->getUnitList($ResourcesList[0]["resource_id"]);
+
+          if (!empty($_FILES)){
+               $ymd = date("Ymd",time());
+               $path = "../public/uploadfile/$ymd/";
+               //得到上传的临时文件流
+               $tempFile = $_FILES['Filedata']['tmp_name'];
+               //允许的文件后缀
+               $fileTypes = array('jpg','jpeg','gif','png','doc','docx','pptx','ppt'); 
+               //得到文件原名
+               $fileName = iconv("UTF-8","GB2312",$_FILES["Filedata"]["name"]);
+               $fileParts = pathinfo($_FILES['Filedata']['name']);
+               $uploadfile = $path.time().'-'; 
+               //最后保存服务器地址
+               if(!is_dir($path))
+                  mkdir($path,0777,true); 
+               if (move_uploaded_file($tempFile,$uploadfile.$fileName)){
+                    echo $uploadfile.$_FILES['Filedata']['name'];
+               }else{
+                    echo "上传失败！";
+               }
+               exit;
+               
+          }
+          $this->view->UnitList = $UnitList;
+          $this->view->ResourcesList = $ResourcesList;
+          $this->_helper->layout->setLayout('pop2');
+     }
+     
+     /*
+      *进入课堂
+      */
+     public function  manageAction(){
+          
+          $this->_helper->layout->setLayout('pop2');
+     }
+     
+     /*
+      *获取资源对应单元
+      */
+     public function  getunitidAction(){
+          if($_POST['id']){
+               $resource_id = $_POST['id'];
+               $UnitList = $this->_Teachadmin->getUnitList($resource_id);
+               $html = '';
+               if($UnitList && is_array($UnitList)){
+                    foreach ($UnitList as $v)
+                        $html .= '<li class="tl tl-01"><a value="'.$v["unit_id"].'" 
+                        href="javascript:void(0);">'.$v["unit_name"].'</a></li>';
+               }
+               echo $html;exit;
+          }
+          $this->_helper->layout->setLayout('pop2');
+     }
+     
+     /*
+      *获取资源对应单元.
+      */     
+     public function  addassignAction(){
+          $resource_id = $this->_getParam("resource_id");
+          $unit_id = $this->_getParam("unit_id");
+          $data = $this->_getParam("data");
+          $this->_Teachadmin->updatetable('tbl_knowledge',array('aid'=>"$data")," resource_id='$resource_id' 
+          AND unit_id='$unit_id'");     
+          echo '绑定资源成功';
+          //$this->_Teachadmin->updatetable('tbl_knowledge',array('aid'=>"aa")," resource_id='28630' AND unit_id='1'");               
+          exit;
+     }
+
+}
+
+
+
+如果在前端处理文件名称的话，需要加一个自循环：                                                          
+$(function() {                                                                                       
+var img_id_upload=new Array();//初始化数组，存储已经上传的图片名
+    var i=0;//初始化数组下标
+    $("#file_upload_1").uploadify({                                                                      
+        'auto'           : false,//关闭自动上传
+        'removeTimeout' : 1,//文件队列上传完成1秒后删除
+        'swf'      : 'uploadify.swf',
+        'uploader' : 'uploadify.php',
+        'method'   : 'post',//方法，服务端可以用$_POST数组获取数据
+        'buttonText' : '选择图片',//设置按钮文本
+        'multi'    : true,//允许同时上传多张图片
+        'uploadLimit' : 10,//一次最多只允许上传10张图片
+        'fileTypeDesc' : 'Image Files',//只允许上传图像
+        'fileTypeExts' : '*.gif; *.jpg; *.png',//限制允许上传的图片后缀
+        'fileSizeLimit' : '20000KB',//限制上传的图片不得超过200KB
+        'onUploadSuccess': function(file, data, response) {//每次成功上传后执行的回调函数，从服务端返回数据到前端
+               img_id_upload[i]=data;
+               i++;
+               //alert(data);
+        },
+        'onQueueComplete' : function(queueData) {//上传队列全部完成后执行的回调函数
+           if(img_id_upload.length>0)
+           alert('成功上传的文件有：'+encodeURIComponent(img_id_upload));
+        } 
+
+    });
+});
+
+
+
+如果后端返回的data,是一个JSON对象：                                                                  
+$(function(){$("#file_upload").uploadify({
+        //开启调试
+        'debug' : false,
+        //是否自动上传
+        'auto':false,
+        //超时时间
+        'successTimeout':99999,
+        //flash
+        'swf': "uploadify.swf",
+        //服务器端脚本使用的文件对象的名称 $_FILES个['upload']
+        'fileObjName':'upload',
+        //上传处理程序
+        'uploader':'imageUpload.php',
+        //浏览按钮的背景图片路径
+        'buttonImage':'upbutton.gif',
+        //浏览按钮的宽度
+        'width':'100',
+        //浏览按钮的高度
+        'height':'32',
+        //expressInstall.swf文件的路径。
+        'expressInstall':'expressInstall.swf',
+        //允许上传的文件后缀
+        'fileTypeExts':'*.jpg;*.jpge;*.gif;*.png',
+        //上传文件的大小限制
+        'fileSizeLimit':'3MB',
+        //上传数量
+        'queueSizeLimit' : 25,                                                                            
+        //上传到服务器，服务器返回相应信息到data里                                                             
+        'onUploadSuccess':function(file, data, response){
+          alert(data);                                                                               
+        }
+        
+
+ 
+
+部署在部署一个Uploadify实例前，请确保满足最低要求：
+
+	* 1.jQuery 1.4.x 或更高版本
+	* 2.Flash Player 9.0.24 或更高版本
+	* 3.支持PHP, ASP.Net, Cold Fusion的服务器环境(官方默认支持PHP)
+
+下载最新版本的uploadify，解压到服务器根目录下的uploadify文件夹中，你可以看到以下文件：
+
+	* Change Log.txt（uploadify的升级日志，部署时删掉）
+	* check-exists.php（用来检查上传目标文件夹里是否存在相同文件）
+	* index.php（官方实例）
+	* jquery.uploadify.js（上传插件）
+	* jquery.uploadify.min.js（压缩版的上传插件，部署时使用）
+	* license.txt（许可证文件，部署时删掉）
+	* uploadify.css（上传控件样式表）
+	* uploadify.php（上传数据处理文件）
+	* uploadify.swf（flash基础文件）
+	* uploadify-cancel.png（取消按钮图片）
+
+在官方提供的实例文件中，是引用的jquery官方网站上的jquery库，有需要的朋友还需要本地引用jquery库。
+下面我们看一看如何在你的项目上部署uploadify：
+1.我们假定上传控件部署在网站根目录下的upload.php中，uploadify文件夹位于网站根目录中，
+上传的文件保存在根目录下的upload文件夹中，uploadify文件夹中包含check-exists.php、jquery.min.js 、
+jquery.uploadify.min.js、uploadify.css、uploadify.swf、uploadify-cancel.png。
+2.引用jquery库
+
+	1. <script type="text/javascript" src="/uploadify/jquery.min.js"></script>
+
+3.引用uploadify脚本
+
+	1. <script type="text/javascript" src="/uploadify /jquery.uploadify.min.js"></script>
+
+4.引用uploadify样式表
+
+	1. <link rel="stylesheet" type="text/css" href="uploadify.css" />
+
+5. 声明一个普通的html文件上传控件，并指定id
+
+	1. <input id="file_upload" name="file_upload" type="file" multiple="true">
+
+6. 将声明的普通上传控件与Uploadify插件绑定，并初始化
+
+	1. <script type="text/javascript">
+	2.     $(function() {
+	3.         $('#file_upload').uploadify({
+	4.             'swf'      : '/uploadify uploadify.swf',    //指定上传控件的主体文件
+	5.             'uploader' : '/uploadify uploadify.php'    //指定服务器端上传处理文件
+	6.             //其他配置项
+	7.         });
+	8.     });
+	9. </script>
+
+复杂模式以及属性介绍：
+$(document).ready(function() {
+    $("#file_upload").uploadify({
+        //开启调试
+        'debug' : false,
+        //是否自动上传
+        'auto':false,
+        //超时时间
+        'successTimeout':99999,
+        //附带值
+        'formData':{
+            'userid':'用户id',
+            'username':'用户名',
+            'rnd':'加密密文'
+        },
+        //flash
+        'swf': "uploadify.swf",
+        //不执行默认的onSelect事件
+        'overrideEvents' : ['onDialogClose'],
+        //文件选择后的容器ID
+        'queueID':'uploadfileQueue',
+        //服务器端脚本使用的文件对象的名称 $_FILES个['upload']
+        'fileObjName':'upload',
+        //上传处理程序
+        'uploader':'imageUpload.php',
+        //浏览按钮的背景图片路径
+        'buttonImage':'upbutton.gif',
+        //浏览按钮的宽度
+        'width':'100',
+        //浏览按钮的高度
+        'height':'32',
+        //expressInstall.swf文件的路径。
+        'expressInstall':'expressInstall.swf',
+        //在浏览窗口底部的文件类型下拉菜单中显示的文本
+        'fileTypeDesc':'支持的格式：',
+        //允许上传的文件后缀
+        'fileTypeExts':'*.jpg;*.jpge;*.gif;*.png',
+        //上传文件的大小限制
+        'fileSizeLimit':'3MB',
+        //上传数量
+        'queueSizeLimit' : 25,
+        //每次更新上载的文件的进展
+        'onUploadProgress' : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal) {
+             //有时候上传进度什么想自己个性化控制，可以利用这个方法
+             //使用方法见官方说明
+        },
+        //选择上传文件后调用
+        'onSelect' : function(file) {
+                  
+        },
+        //返回一个错误，选择文件的时候触发
+        'onSelectError':function(file, errorCode, errorMsg){
+            switch(errorCode) {
+                case -100:
+                    alert("上传的文件数量已经超出系统限制的"+$('#file_upload').uploadify('settings','queueSizeLimit')
+                    +"个文件！");
+                    break;
+                case -110:
+                    alert("文件 ["+file.name+"] 大小超出系统限制的"+$('#file_upload')
+                    .uploadify('settings','fileSizeLimit')+"大小！");
+                    break;
+                case -120:
+                    alert("文件 ["+file.name+"] 大小异常！");
+                    break;
+                case -130:
+                    alert("文件 ["+file.name+"] 类型不正确！");
+                    break;
+            }
+        },
+        //检测FLASH失败调用
+        'onFallback':function(){
+            alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+        },
+        //上传到服务器，服务器返回相应信息到data里
+        'onUploadSuccess':function(file, data, response){
+            alert(data);
+        }
+    });
+});
+
+
+设置的属性：
+
+      id: jQuery(this).attr('id'),//绑定的input的ID
+
+      langFile: 'http://www.static-xxx.nu/uploader/uploadifyLang_en.js',//语言包的路径，能设置所有的提示文字
+
+      swf: 'http://www.static-xxx.nu/uploader/uploadify.swf',//[必须设置]swf的路径
+
+      uploader: '/uploadify/galleri.php',//[必须设置]上传文件触发的url
+
+      auto:false,//文件选择完成后，是否自动上传
+
+      buttonText:'Välj Filer',//上传按钮的文字
+
+      height: 30,//上传按钮的高和宽
+
+      width: 120,
+
+      buttonCursor: 'pointer',//上传鼠标hover后Cursor的形状
+
+      cancelImage: 'http://www.static-xxx.nu/uploadify-cancel.png',//[必须设置]取消图片的路径
+
+      checkExisting:'/uploader/uploadify-check-existing.php',//检查上传文件是否存，触发的url，返回1/0
+
+      debug: true,//debug模式开/关，打开后会显示debug时的信息
+
+      fileObjName:'file',
+
+      fileSizeLimit : 0,//文件的极限大小，以字节为单位，0为不限制。1MB:1*1024*1024
+
+      fileTypeDesc: 'Bild JPG',//允许上传的文件类型的描述，在弹出的文件选择框里会显示
+
+      fileTypeExts: '*.jpg',//允许上传的文件类型，限制弹出文件选择框里能选择的文件
+
+      method: 'post',//和后台交互的方式：post/get
+
+      multi: true,//是否能选择多个文件
+
+      queueID: 'fileQueue',//显示上传文件队列的元素id，可以简单用一个div来显示
+
+      queueSizeLimit : 999,//队列中允许的最大文件数目
+
+      //队列中显示文件上传进度的方式：all-上传速度+百分比，percentage-百分比，speed-上传速度
+      progressData : 'all', // 'percentage''speed''all'
+
+      removeCompleted : true,//上传成功后的文件，是否在队列中自动删除
+
+      removeTimeout: 3,
+
+      requeueErrors : true,
+
+      postData: {},//和后台交互时，附加的参数
+
+      preventCaching : true,
+
+      transparent: true,
+
+      successTimeout : 30,//上传时的
+
+      timeoutuploadLimit:999//能同时上传的文件数目
+
+ 设置的事件：
+
+onDialogClose : function(swfuploadifyQueue) {//当文件选择对话框关闭时触发
+  if( swfuploadifyQueue.filesErrored > 0 ){
+  alert( '添加至队列时有'
+  +swfuploadifyQueue.filesErrored
+  +'个文件发生错误n'
+  +'错误信息:'
+  +swfuploadifyQueue.errorMsg
+  +'n选定的文件数:'
+  +swfuploadifyQueue.filesSelected
+  +'n成功添加至队列的文件数:'
+  +swfuploadifyQueue.filesQueued
+  +'n队列中的总文件数量:'
+  +swfuploadifyQueue.queueLength);
+  }
+}
+
+onDialogOpen : function() {//当选择文件对话框打开时触发
+  alert( 'Open!');
+}
+
+ 
+
+onSelect : function(file) {//当每个文件添加至队列后触发
+  alert( 'id: ' + file.id
+  + ' - 索引: ' + file.index
+  + ' - 文件名: ' + file.name
+  + ' - 文件大小: ' + file.size
+  + ' - 类型: ' + file.type
+  + ' - 创建日期: ' + file.creationdate
+  + ' - 修改日期: ' + file.modificationdate
+  + ' - 文件状态: ' + file.filestatus);
+}
+
+ 
+
+onSelectError : function(file,errorCode,errorMsg) {//当文件选定发生错误时触发
+  alert( 'id: ' + file.id
+  + ' - 索引: ' + file.index
+  + ' - 文件名: ' + file.name
+  + ' - 文件大小: ' + file.size
+  + ' - 类型: ' + file.type
+  + ' - 创建日期: ' + file.creationdate
+  + ' - 修改日期: ' + file.modificationdate
+  + ' - 文件状态: ' + file.filestatus
+  + ' - 错误代码: ' + errorCode
+  + ' - 错误信息: ' + errorMsg);
+}
+
+ 
+
+onQueueComplete : function(stats) {//当队列中的所有文件全部完成上传时触发
+  alert( '成功上传的文件数: ' + stats.successful_uploads
+  + ' - 上传出错的文件数: ' + stats.upload_errors
+  + ' - 取消上传的文件数: ' + stats.upload_cancelled
+  + ' - 出错的文件数' + stats.queue_errors);
+}
+
+ 
+
+onUploadComplete : function(file,swfuploadifyQueue) {//队列中的每个文件上传完成时触发一次
+  alert( 'id: ' + file.id
+  + ' - 索引: ' + file.index
+  + ' - 文件名: ' + file.name
+  + ' - 文件大小: ' + file.size
+  + ' - 类型: ' + file.type
+  + ' - 创建日期: ' + file.creationdate
+  + ' - 修改日期: ' + file.modificationdate
+  + ' - 文件状态: ' + file.filestatus
+  + ' - 出错的文件数: ' + swfuploadifyQueue.filesErrored
+  + ' - 错误信息: ' + swfuploadifyQueue.errorMsg
+  + ' - 要添加至队列的数量: ' + swfuploadifyQueue.filesSelected
+  + ' - 添加至对立的数量: ' + swfuploadifyQueue.filesQueued
+  + ' - 队列长度: ' + swfuploadifyQueue.queueLength);
+}
+
+ 
+//上传文件出错是触发（每个出错文件触发一次）
+onUploadError : function(file,errorCode,errorMsg,errorString,swfuploadifyQueue) {
+  alert( 'id: ' + file.id
+  + ' - 索引: ' + file.index
+  + ' - 文件名: ' + file.name
+  + ' - 文件大小: ' + file.size
+  + ' - 类型: ' + file.type
+  + ' - 创建日期: ' + file.creationdate
+  + ' - 修改日期: ' + file.modificationdate
+  + ' - 文件状态: ' + file.filestatus
+  + ' - 错误代码: ' + errorCode
+  + ' - 错误描述: ' + errorMsg
+  + ' - 简要错误描述: ' + errorString
+  + ' - 出错的文件数: ' + swfuploadifyQueue.filesErrored
+  + ' - 错误信息: ' + swfuploadifyQueue.errorMsg
+  + ' - 要添加至队列的数量: ' + swfuploadifyQueue.filesSelected
+  + ' - 添加至对立的数量: ' + swfuploadifyQueue.filesQueued
+  + ' - 队列长度: ' + swfuploadifyQueue.queueLength);
+}
+
+ 
+
+onUploadProgress : function(file,fileBytesLoaded,fileTotalBytes,
+queueBytesLoaded,swfuploadifyQueueUploadSize) {//上传进度发生变更时触发
+alert( 'id: ' + file.id
+  + ' - 索引: ' + file.index
+  + ' - 文件名: ' + file.name
+  + ' - 文件大小: ' + file.size
+  + ' - 类型: ' + file.type
+  + ' - 创建日期: ' + file.creationdate
+  + ' - 修改日期: ' + file.modificationdate
+  + ' - 文件状态: ' + file.filestatus
+  + ' - 当前文件已上传: ' + fileBytesLoaded
+  + ' - 当前文件大小: ' + fileTotalBytes
+  + ' - 队列已上传: ' + queueBytesLoaded
+  + ' - 队列大小: ' + swfuploadifyQueueUploadSize);
+}
+
+ 
+
+onUploadStart: function(file) {//上传开始时触发（每个文件触发一次）
+  alert( 'id: ' + file.id
+  + ' - 索引: ' + file.index
+  + ' - 文件名: ' + file.name
+  + ' - 文件大小: ' + file.size
+  + ' - 类型: ' + file.type
+  + ' - 创建日期: ' + file.creationdate
+  + ' - 修改日期: ' + file.modificationdate
+  + ' - 文件状态: ' + file.filestatus );
+}
+
+
+
+
