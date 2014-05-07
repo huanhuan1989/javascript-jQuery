@@ -1,0 +1,193 @@
+http://www.jb51.net/article/29893.htm
+
+JSON对象浏览器支持：比如：IE8+ \ FireFox 3.5+ \ Safari 4+ \ Opera 10.5 \ Chrome
+    低版本，可加载：JQUERY.JS   或  json.js
+
+    在JSON中，有三种类型值：简单值、对象和数组
+    1、简单值：使用与javascript相同的语法，可以在JSON中表示字符串、数值、布尔值和null（但JSON不支付javascript中的特殊值
+    undefined）
+    2、对象值：一个对象以"{"（左括号）开始，"}"（右括号）结束。每个“名称”后跟一个“：”（冒号）；“ '名称/值 ' 对 ”之间使用
+    “，”（逗号）分隔。名称用引号括起来；值如果是字符串则必须用括号，数值型则不需要。
+    例如：
+    var o = {'name' : 'wanghuan', add : '北京市'}
+
+    2、数组：值(value)是有序集合。数组的值也可以是任意类型—简单值、对象或数组。一个数组以"["（左中括号）开始，"]"
+    （右中括号）结束。值之间使用“，”（逗号）分隔。
+    例如：
+    var o = {
+        [
+            {'name' : 'wanghuan', add : '北京市'},
+            {'name' : 'majie', add : '北京市'}
+        ]
+    }
+
+    在数据传输过程中，json是以文本，即字符串的形式传递的，而JS操作的是JSON对象，所以，JSON对象和JSON字符串之间的相互转换
+    是有关键。
+    例如：
+    1)json 字符串
+    '{"name" : "wanghuan", "add" : "北京市"}';
+
+    2)javascript对象字面量：
+    var str = {'name' : 'wanghuan', add : '北京市'}
+
+    3)json对象：
+    {'name' : 'wanghuan', add : '北京市'}
+
+    JSON对象与javascript的对象字面量相比，JSON对象有两个不一样的地方。首先（1）没有声明变量（JSON中没有变量的概念）。
+    （2）没有末尾的分号（因为这不是javascript语句，所以不需要加分号）。
+    再说一遍：对象的属性必须加双引号或单引号，这在JSON中是必需的。属性的值可以是简单值，也可以是复杂类型值。
+
+    JSON可以解析为javascript对象的优势极其明显。
+
+一、JSON字符串转换成JSON对象
+    要使用上面的str,必须使用下面的方法先转化为JSON对象；
+    //由JSON字符串转为JSON对象
+    var obj = eval('('+str+')');  //早期的JSON解析器基本上是使用javascript的eval()函数。由于JSON是javascript语法的子集，
+    因此eval()函数可以解析、解释并返回javascript对象和数组。
+
+    或者
+    var obj = JSON.parse(str); //由JSON字符串转换为javascript值
+
+    或者
+    需要引入jquery.js
+    jQuery.parseJSON(str)//其中str就是满足本标题描述的字符串
+    var obj = jQuery.parseJSON(str); //由JSON字符串转换为JSON对象（在JQUERY中使用的。）
+
+
+    然后就可以这样取结果了：
+    console.log('obj.name ===' + obj.name + '------>' + 'obj.add ===' + obj.add);
+
+    特别注意：如果obj本来就是一个JSON对象，那么使用eval()函数转换后（哪怕是多次转换）还是JSON对象， 但是使用
+    parseJSON()函数处理后会有问题（抛出语法异常）
+
+二、可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。
+    JSON对象有两个方法stringify()和parse()，这两个方法分别用于把javascript对象序列化为JSON字符串和把JSON字符串解析为
+    原生javascript值。
+    可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。
+    语法：
+    JSON.stringify(value [, replacer] [, space])
+    value：是必须要的字段。就是你输入的对象，比如数组啊，类啊等等。
+    replacer：这个是可选的。它又分为2种方式，一种是方法，第二种是数组。
+    情况一：我们先说数据，通过我们后面的实验可以知道，它是和第一个有关系的。一般来说，我们系列化后的结果是通过键值对来
+    进行表示的。
+    比如说：
+    name:"lan",age:25
+    这种形式。
+    所以，如果这种形式的话，如果第二个的值在第一个存在，那么的话就以第二个的值做key，第一个值为value进行表示，如果不存在
+    ，sorry，忽略。【是不是有点抽象，我也这么觉得，不过你等一下看实验 就OK了。。呼呼。】
+    情况二：如果是方法，那很简单，就是说把系列化后的每一个对象（记住 是每一个）传进方法里面进行处理。
+     
+    space：很好理解，用什么来做分隔符的。
+    1.如果省略的话，那么显示出来的值 就没有分隔符。直接输出来
+    2.如果是一个数字的话，那么它就定义缩进几个字符，当然 如果大于10 ，则最大值为10.
+    3.如果是一些转义字符，比如“\t”，表示回车，那么它每行一个回车。
+    4.如果仅仅是字符串，OK，就在每行输出值的时候把这些字符串附加上去就OK。当然，最大长度也是10个字符。
+
+    或者：
+    var last = JSON.stringify(obj);  //将JSON对象转化为JSON字符
+
+    例如：
+    var last = obj.toJSONString(); //将JSON对象转化为JSON字符
+    //toJSONString方法使用的时候，需要引入json.js
+    console.log(last);
+
+    注意：
+    上面的几个方法中，除了eval()函数是js自带的之外，其他的几个方法都来自json.js包。新版本的JSON修改了API，
+    将JSON.stringify() 和 JSON.parse()两个方法都注入到了Javascript的内建对象里面，前者变成了Object.toJSONString()，
+    而后者变成了 String.parseJSON() 如果提示找不到 toJSONString() 和 parseJSON()方法，则说明您的JSON包版本太低。
+     
+     
+     <script>
+    var str = '{"name" : "wanghuan", "add" : "北京市"}';
+    //var oStr = eval('('+str+')');  //转化为javascript值
+    var oStr = JSON.parse(str);  //转化为为javascript值
+    console.log('oStr.name ==' + oStr.name);  //wanghuan
+
+    var str00 = {"name" : "wanghuan", "add" : "北京市"};
+    var oStr = JSON.stringify(str00);  //转化为字符串
+    console.log('oStr =='+oStr); //{"name" : "wanghuan", "add" : "北京市"}
+
+    var data={
+        root:
+            [
+                {name:'1',value:'0'},
+                {name:'6101',value:'北京市'},
+                {name:'6102',value:'天津市'},
+                {name:'6103',value:'上海市'},
+                {name:'6104',value:'重庆市'},
+                {name:'6105',value:'渭南市'},
+                {name:'6106',value:'延安市'},
+                {name:'6107',value:'汉中市'},
+                {name:'6108',value:'榆林市'},
+                {name:'6109',value:'安康市'},
+                {name:'6110',value:'商洛市'}
+            ],
+        name : 'wanghuan',
+        add : '北京市'
+    }
+    //利用FOR-IN 获取里边在KEY+key[i]值
+    for(var i in data){
+        console.log(i+'==='+i+'->-'+data[i]+'===='+data[i]);
+    }
+    //利用FOR循环获取key[i]值
+    console.log( data.root.length);  //11
+    for(var i=0; i<data.root.length; i++){
+        console.log('data.root[i].value == ' + data.root[i].value);  //data.root[i] 是object  {name:'1',value:'0'} 多个
+    }
+
+    var user =
+    {
+        "username":"andy",
+        "age":20,
+        "info": { "tel": "123456", "cellphone": "98765"},
+        "address":
+                [
+                    {"city":"beijing","postcode":"222333"},
+                    {"city":"newyork","postcode":"555666"}
+                ]
+    }
+
+    console.log('user.username == ' + user.username);
+    console.log('user.age == ' + user.age);
+    console.log('user.info.cellphone == ' + user.info.cellphone); //JSON形式获取！
+    console.log('user.address[0].city == ' + user.address[0].city);  //数组形式获取！
+    console.log('user.address[0].postcode == ' + user.address[0].postcode);
+
+
+    var students = new Array() ;
+    students[0] = "Lanny";
+    students[1] = "dong";
+    students[2] = "I love you";
+    var json = JSON.stringify(students,switchUpper);
+    function switchUpper(key, value) {
+        return value.toString().toUpperCase();
+    }
+    console.log(json); //"LANNY,DONG,I LOVE YOU"
+
+
+    var stu = new Array();
+    stu[0] = "1";
+    stu[1] = "2";
+    var json00 = JSON.stringify(students,stu);
+    alert(json00);  //["Lanny","dong","I love you"]
+
+
+    var student = new Object();
+    student.qq = "5485891512";
+    student.name = "Lanny";
+    student.age = 25;
+
+    var stu00 = new Array();
+    stu00[0] = "qq";
+    stu00[1] = "age";
+    stu00[2] = "Hi";//这个student对象里不存在。
+
+    var json01 = JSON.stringify(student,stu00);
+    console.log(json01);  //{"qq":"5485891512","age":25}
+
+    /*
+    for(var i=0; i< a.length; i++){}   //高等级的chrome浏览器才好
+    for(var i=0,j = a.length; i<j; i++){}  //老版本，为了性能提升。
+     //如果 for循环的arr是HTML元素集合的话，每次都会实时操作DOM来获取length，性能比较差。如果arr是数组，效率应该差不多
+    */
+</script>
