@@ -1,8 +1,8 @@
 2014/5/7  一天整理完，在《javascript 高级程序设计》 第20章 以及一些网站中找来的，记录下来，方便自己看
 
-
 http://www.jb51.net/article/29893.htm
-    JSON对象浏览器支持：比如：IE8+ \ FireFox 3.5+ \ Safari 4+ \ Opera 10.5 \ Chrome
+
+JSON对象浏览器支持：比如：IE8+ \ FireFox 3.5+ \ Safari 4+ \ Opera 10.5 \ Chrome
     低版本，可加载：JQUERY.JS   或  json.js
 
     在JSON中，有三种类型值：简单值、对象和数组
@@ -27,17 +27,17 @@ http://www.jb51.net/article/29893.htm
     是有关键。
     例如：
     1)json 字符串
-    '{"name" : "wanghuan", "add" : "北京市"}';
+    '{"name" : "wanghuan", "add" : "北京市"}'
 
     2)javascript对象字面量：
-    var str = {'name' : 'wanghuan', add : '北京市'}
+    var str = {'name' : 'wanghuan', add : '北京市'};
 
     3)json对象：
     {'name' : 'wanghuan', add : '北京市'}
 
     JSON对象与javascript的对象字面量相比，JSON对象有两个不一样的地方。首先（1）没有声明变量（JSON中没有变量的概念）。
-    （2）没有末尾的分号（因为这不是javascript语句，所以不需要加分号）。再说一遍：对象的属性必须加双引号或单引号，这在
-    JSON中是必需的。属性的值可以是简单值，也可以是复杂类型值。
+    （2）没有末尾的分号（因为这不是javascript语句，所以不需要加分号）。
+    再说一遍：对象的属性必须加双引号或单引号，这在JSON中是必需的。属性的值可以是简单值，也可以是复杂类型值。
 
     JSON可以解析为javascript对象的优势极其明显。
 
@@ -66,28 +66,24 @@ http://www.jb51.net/article/29893.htm
     JSON对象有两个方法stringify()和parse()，这两个方法分别用于把javascript对象序列化为JSON字符串和把JSON字符串解析为
     原生javascript值。
     可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。
-    实际上，JSON.stringify()除了要序列化的Javascript对象外，还可以接收另外两个参数，这两个参数用于指定以不同的方式序列化
-    javascript对象。
     语法：
     JSON.stringify(value [, replacer] [, space])
     value：是必须要的字段。就是你输入的对象，比如数组啊，类啊等等。
-    replacer：这个是可选的。它又分为2种方式，一种是方法，第二种是数组。(第一个对象是过滤器，可以是一个数组，也可以是
-    一个函数。)
+    replacer：这个是可选的。它又分为2种方式，一种是方法，第二种是数组。
     情况一：我们先说数据，通过我们后面的实验可以知道，它是和第一个有关系的。一般来说，我们系列化后的结果是通过键值对来
     进行表示的。
     比如说：
     name:"lan",age:25
     这种形式。
-    所以，如果这种形式的话，如果第二个的值在第一个存在，那么的话就以第二个的值做key，第一个值为value进行表示，如果不存在，
-    sorry，忽略。【是不是有点抽象，我也这么觉得，不过你等一下看实验 就OK了。。呼呼。】
+    所以，如果这种形式的话，如果第二个的值在第一个存在，那么的话就以第二个的值做key，第一个值为value进行表示，如果不存在
+    ，sorry，忽略。【是不是有点抽象，我也这么觉得，不过你等一下看实验 就OK了。。呼呼。】
     情况二：如果是方法，那很简单，就是说把系列化后的每一个对象（记住 是每一个）传进方法里面进行处理。
-    space：很好理解，用什么来做分隔符的。(第二个参数是一个选项，表示是否在JSON字符串中保留缩进。)
+     
+    space：很好理解，用什么来做分隔符的。
     1.如果省略的话，那么显示出来的值 就没有分隔符。直接输出来
     2.如果是一个数字的话，那么它就定义缩进几个字符，当然 如果大于10 ，则最大值为10.
     3.如果是一些转义字符，比如“\t”，表示回车，那么它每行一个回车。
     4.如果仅仅是字符串，OK，就在每行输出值的时候把这些字符串附加上去就OK。当然，最大长度也是10个字符。
-
-    单独或组合使用这两个参数，可以更全面深入地控制JSON的序列化。
 
     或者：
     var last = JSON.stringify(obj);  //将JSON对象转化为JSON字符
@@ -101,31 +97,9 @@ http://www.jb51.net/article/29893.htm
     上面的几个方法中，除了eval()函数是js自带的之外，其他的几个方法都来自json.js包。新版本的JSON修改了API，
     将JSON.stringify() 和 JSON.parse()两个方法都注入到了Javascript的内建对象里面，前者变成了Object.toJSONString()，
     而后者变成了 String.parseJSON() 如果提示找不到 toJSONString() 和 parseJSON()方法，则说明您的JSON包版本太低。
-
-三、toJSON()方法
-    有时，JSON.stringify()还是不能满足自定义序列化的需求，在这种情况下，我们可以使用toJSON()方法，返回其自身的JSON数据
-    格式。原生Data对象有一个toJSON()方法，能够将Javascript的Data对象自动转换成ISO 8601日期字符串（与在DATA对象上调用
-    toISOString()的结果完全一样）
-    可以对任何对象添加toJSON()方法！
-
-    与Data对象类似，这个对象也将被序列化为一个简单的字符串而非对象。可以让toJSON()方法返回任何序列化的值，它都能正常工作。也可以让这个方法返回undefined,此时如果包含它的对象嵌入在另一个对象中，它导致该对象的值变成null，而如果包含它的对象是顶级对象，结果是undefined.
-    toJSON()可以作为函数过滤器的补充，因此理解序列化的内部顺序十分重要，假设把一个对象传入序列化。
-    （1）如果存在toJSON()方法而且能通过它取得有效的值，则调用该方法。否则，按默认顺序执行序列化。
-    （2）如果提供了第二个参数，应用这个函数过滤器，传入函数过滤器的值是第（1）步返回的值。
-    （3）对第（2）步返回的每个值进行相对应的序列化。
-    （4）如果提供了第三个参数，执行相应的格式化
-    无论是考虑定义toJSON()方法，还是考虑使用函数过滤器，亦或需要同时使用两者，理解这个顺序是至关重要的。
-
-四、解析选项
-    JSON.parse()方法也可以接收另一个参数，该参数是一个函数，将在每个键值对儿上调用，为了区别JSON.stringify()接收的替换
-    （过滤）函数（replacer），这个函数被称为还原函数（reviver），但实际上这两个函数的签名是相同的---它们都接收两个参数，
-    一个健和一个值，而且都需要返回一个值。
-    如果还原函数返回undefined，则表示要从结果中删除相应的键；如果返回其他值，则将该值插入到结果中。在将日期字符串
-    转换为Date对象时，经常要用到还原函数。
-
-
-
-<script>
+     
+     
+     <script>
     var str = '{"name" : "wanghuan", "add" : "北京市"}';
     //var oStr = eval('('+str+')');  //转化为javascript值
     var oStr = JSON.parse(str);  //转化为为javascript值
@@ -197,7 +171,7 @@ http://www.jb51.net/article/29893.htm
     stu[0] = "1";
     stu[1] = "2";
     var json00 = JSON.stringify(students,stu);
-    console.log(json00);  //["Lanny","dong","I love you"]
+    alert(json00);  //["Lanny","dong","I love you"]
 
 
     var student = new Object();
@@ -215,91 +189,7 @@ http://www.jb51.net/article/29893.htm
 
     /*
     for(var i=0; i< a.length; i++){}   //高等级的chrome浏览器才好
-    for(var i=0, j = a.length; i<j; i++){}  //老版本，为了性能提升。
-    //如果 for循环的arr是HTML元素集合的话，每次都会实时操作DOM来获取length，性能比较差。如果arr是数组，效率应该差不多
+    for(var i=0,j = a.length; i<j; i++){}  //老版本，为了性能提升。
+     //如果 for循环的arr是HTML元素集合的话，每次都会实时操作DOM来获取length，性能比较差。如果arr是数组，效率应该差不多
     */
-
-    var book = {
-        'title' : 'wanghuan',
-        'authors' : [
-            "city","beijing","postcode","222333"
-        ],
-        'edition' : 3,
-        'year' : 2011
-    };
-    var jsonTxt = JSON.stringify(book, function(key, value){
-        switch(key){
-            case 'authors':
-                return value.join(',');
-            case 'edition':
-                return undefined;
-            case 'year':
-                return 2014;
-            default :
-                return value;
-        }
-    });
-    console.log(jsonTxt);  //{"title":"wanghuan","authors":"city,beijing,postcode,222333","year":2014}
-
-
-    var jsonTxt02 = JSON.stringify(book, null, '---');
-    console.log(jsonTxt02);
-    /*
-    * 输出结果！
-    {
-     ---"title": "wanghuan",
-     ---"authors": [
-     ------"city",
-     ------"beijing",
-     ------"postcode",
-     ------"222333"
-     ---],
-     ---"edition": 3,
-     ---"year": 2011
-     }
-    */
-
-    //toJSON() 方法
-    var book02 = {
-        'title' : 'wanghuan',
-        'authors' : [
-            "city","beijing","postcode","222333"
-        ],
-        'edition' : 3,
-        'year' : 2011,
-        toJSON : function(){
-            return this.authors;
-        }
-    };
-    var jsonTxt03 = JSON.stringify(book02);
-    console.log(jsonTxt03);// ["city","beijing","postcode","222333"]
-
-    //解析选项
-    var book03 = {
-        'title' : 'wanghuan',
-        'authors' : [
-            "city","beijing","postcode","222333"
-        ],
-        'edition' : 3,
-        'year' : 2011,
-        releaseDate : new Date(2014, 05, 08)
-    };
-    var jsonTxt04 = JSON.stringify(book03);
-    console.log(jsonTxt04); 
-    //{"title":"wanghuan","authors":["city","beijing","postcode","222333"],"edition":3,"year":2011,"
-    releaseDate":"2014-06-07T16:00:00.000Z"}
-    
-    //typeof bookCopy == string
-    var bookCopy = JSON.stringify(book03, function(key, value){
-        if(key == 'releaseDate'){
-            return new Date(value);
-        }else{
-            return value;
-        }
-    });
-    console.log(bookCopy.toUpperCase()); //{"TITLE":"WANGHUAN","AUTHORS":["CITY","BEIJING","POSTCODE","222333"]
-    ,"EDITION":3,"YEAR":2011,"RELEASEDATE":{}}
-    
-    console.log(bookCopy.releaseDate); //undefined
-    console.log(bookCopy.releaseDate.getFullYear()); //Cannot call method 'getFullYear' of undefined
 </script>
