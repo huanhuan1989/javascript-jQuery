@@ -99,7 +99,7 @@ JSON对象浏览器支持：比如：IE8+ \ FireFox 3.5+ \ Safari 4+ \ Opera 10.
     而后者变成了 String.parseJSON() 如果提示找不到 toJSONString() 和 parseJSON()方法，则说明您的JSON包版本太低。
      
      
-     <script>
+<script>
     var str = '{"name" : "wanghuan", "add" : "北京市"}';
     //var oStr = eval('('+str+')');  //转化为javascript值
     var oStr = JSON.parse(str);  //转化为为javascript值
@@ -171,7 +171,7 @@ JSON对象浏览器支持：比如：IE8+ \ FireFox 3.5+ \ Safari 4+ \ Opera 10.
     stu[0] = "1";
     stu[1] = "2";
     var json00 = JSON.stringify(students,stu);
-    alert(json00);  //["Lanny","dong","I love you"]
+    console.log(json00);  //["Lanny","dong","I love you"]
 
 
     var student = new Object();
@@ -189,7 +189,90 @@ JSON对象浏览器支持：比如：IE8+ \ FireFox 3.5+ \ Safari 4+ \ Opera 10.
 
     /*
     for(var i=0; i< a.length; i++){}   //高等级的chrome浏览器才好
-    for(var i=0,j = a.length; i<j; i++){}  //老版本，为了性能提升。
-     //如果 for循环的arr是HTML元素集合的话，每次都会实时操作DOM来获取length，性能比较差。如果arr是数组，效率应该差不多
+    for(var i=0, j = a.length; i<j; i++){}  //老版本，为了性能提升。
+    //如果 for循环的arr是HTML元素集合的话，每次都会实时操作DOM来获取length，性能比较差。如果arr是数组，效率应该差不多
     */
+
+    var book = {
+        'title' : 'wanghuan',
+        'authors' : [
+            "city","beijing","postcode","222333"
+        ],
+        'edition' : 3,
+        'year' : 2011
+    };
+    var jsonTxt = JSON.stringify(book, function(key, value){
+        switch(key){
+            case 'authors':
+                return value.join(',');
+            case 'edition':
+                return undefined;
+            case 'year':
+                return 2014;
+            default :
+                return value;
+        }
+    });
+    console.log(jsonTxt);  //{"title":"wanghuan","authors":"city,beijing,postcode,222333","year":2014}
+
+
+    var jsonTxt02 = JSON.stringify(book, null, '---');
+    console.log(jsonTxt02);
+    /*
+    * 输出结果！
+    {
+     ---"title": "wanghuan",
+     ---"authors": [
+     ------"city",
+     ------"beijing",
+     ------"postcode",
+     ------"222333"
+     ---],
+     ---"edition": 3,
+     ---"year": 2011
+     }
+    */
+
+    //toJSON() 方法
+    var book02 = {
+        'title' : 'wanghuan',
+        'authors' : [
+            "city","beijing","postcode","222333"
+        ],
+        'edition' : 3,
+        'year' : 2011,
+        toJSON : function(){
+            return this.authors;
+        }
+    };
+    var jsonTxt03 = JSON.stringify(book02);
+    console.log(jsonTxt03);// ["city","beijing","postcode","222333"]
+
+    //解析选项
+    var book03 = {
+        'title' : 'wanghuan',
+        'authors' : [
+            "city","beijing","postcode","222333"
+        ],
+        'edition' : 3,
+        'year' : 2011,
+        releaseDate : new Date(2014, 05, 08)
+    };
+    var jsonTxt04 = JSON.stringify(book03);
+    console.log(jsonTxt04); 
+    
+    //{"title":"wanghuan","authors":["city","beijing","postcode","222333"],"edition":3,
+    "year":2011,"releaseDate":"2014-06-07T16:00:00.000Z"}
+    
+    //typeof bookCopy == string
+    var bookCopy = JSON.parse(jsonTxt04, function(key, value){
+        if(key == 'releaseDate'){
+            return new Date(value);
+        }else{
+            return value;
+        }
+    });
+    console.log(bookCopy.releaseDate); //Sun Jun 08 2014 00:00:00 GMT+0800 (中国标准时间)
+    console.log(bookCopy.releaseDate.getFullYear()); //2014
+
 </script>
