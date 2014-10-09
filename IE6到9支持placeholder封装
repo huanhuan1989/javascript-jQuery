@@ -1,0 +1,67 @@
+/**
+ * placeholder: 1.0.1
+ * User: huanhuan
+ * Email: th.wanghuan@gmail.com
+ * 微博: huanhuan的天使
+ * Date: 14-10-09.
+ * //placeholder 调用方法,直接在后面增加你需要的对象
+ * fn.keyup = function(){
+		fn._keyup({id:$('input[type="password"]')});  //密码
+		fn._keyup({id:$('input[type="text"]')}); //文本
+	}
+ */
+if(!('placeholder' in document.createElement('input'))){
+	var fn = {};
+	//判断文本框的值是否为空，有值的情况就隐藏提示语，没有值就显示
+	fn._keyup = function(keys){
+		var option = {
+			id:'',
+			keydown:function(){},
+			blur:function(){}
+		}
+		for(var i in keys){
+			if(option.hasOwnProperty(i)){
+				option[i] = keys[i];
+			}
+		}
+		$(option.id).each(function(){
+			var _this = $(this),
+				thisVal = _this.val(),
+				oTitle = _this.attr('placeholder'),
+				oEm = $('<em class="passWTxt">'+oTitle+'</em>');
+			oEm.insertBefore(_this);
+			_this.parent().css({
+				'position':'relative',
+				'left':0,
+				'top':0
+			});
+			//判断文本框的值是否为空，有值的情况就隐藏提示语，没有值就显示
+			thisVal!=""?oEm.hide():oEm.show();
+			_this.on({
+				keydown:function(){
+					var val=$(this).val();
+					oEm.hide();
+				},
+				blur:function(){
+					var val=$(this).val();
+					val!=""?oEm.hide():oEm.show();
+				}
+			});
+			_this.prev('em').click(function(){
+				_this.focus();
+			});
+		});
+	}
+	fn.keyup = function(){
+		fn._keyup({id:$('input[type="password"]')});  //密码
+		fn._keyup({id:$('input[type="text"]')}); //文本
+	}
+	$(function(){
+		//fn调用方法
+		for(fname in fn){
+			if(fname.indexOf('_') == -1){
+				fn[fname]();
+			}
+		}
+	});
+}
